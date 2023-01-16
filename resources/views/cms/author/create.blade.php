@@ -109,7 +109,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Choose Image</label>
-                                    <input type="file" class="form-control" id="image" name="image" placeholder="Enter Author Image">
+                                    <input type="file" name="image" class="form-control" id="image"
+                                    placeholder="Enter Image">
                                 </div>
                             </div>
                         </div>
@@ -144,7 +145,7 @@
         formData.append('gender' , document.getElementById('gender').value);
         formData.append('status' , document.getElementById('status').value);
         formData.append('city_id' , document.getElementById('city_id').value);
-        // formData.append('image' , document.getElementById('image').files);
+        formData.append('image' , document.getElementById('image').files[0]);
         store('/cms/admin/authors' , formData);
     }
 </script>

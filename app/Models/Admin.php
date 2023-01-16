@@ -10,7 +10,7 @@ class Admin extends Model
     use HasFactory;
 
     public function user(){
-        return $this->morphOne(User::class ,'actor', 'actor_type' , 'actor_id');
+        return $this->morphOne(User::class ,'actor', 'actor_type' , 'actor_id', 'id');
     }
 
     

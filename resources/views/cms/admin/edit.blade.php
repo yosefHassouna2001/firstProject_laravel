@@ -31,12 +31,12 @@
                                     <label>City Name</label>
                                     <select class="form-control select2" id="city_id" name="city_id" style="width: 100%;">
                                         @foreach($cities as $city)
-                                            <option 
+                                            <option value="{{ $city->id }}"
                                                 @if($city->id == $admins->user->city_id)
                                                 selected
                                                 @endif>
                                                 {{ $city->city_name }}
-                                            </option>                                        
+                                            </option> 
                                         @endforeach
                                     </select>
                                 </div>

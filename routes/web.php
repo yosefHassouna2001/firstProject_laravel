@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use Illuminate\Support\Facades\Route;
@@ -34,5 +35,9 @@ Route::prefix('cms/admin/')->group(function(){
 
     Route::resource('authors', AuthorController::class);
     Route::post('authors-update/{id}', [AuthorController::class , 'update'])->name('authors-update');
+    
+    Route::resource('categories', CategoryController::class);
+    Route::post('categories-update/{id}', [CategoryController::class , 'update'])->name('categories-update');
+
 });
 

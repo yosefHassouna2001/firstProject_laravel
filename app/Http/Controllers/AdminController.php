@@ -133,7 +133,7 @@ class AdminController extends Controller
     );
 
         if(! $validator->fails()){
-            $admins = Admin::findOrFail();
+            $admins = Admin::findOrFail($id);
             $admins->email = request()->get('email');
             $admins->password = Hash::make($request->get('password'));
 

@@ -4,21 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use App\Models\City;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AuthorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        
-        $authors = Author::orderBy('id' , 'desc')->paginate(10);
+        $authors = Author::with('user')->orderBy('id' , 'desc')->paginate(10);
         return response()->view('cms.author.index' , compact('authors'));
-       
     }
 
     /**
@@ -41,36 +37,52 @@ class AuthorController extends Controller
     public function store(Request $request)
     {
         $validator = Validator($request->all(),[
-            'first_name'=> 'required|string|min:3|max:20',
-            'last_name' => 'required',
-            'email' => 'required',
+            'email'=> 'required|email',
+            'image'=>"required|image|max:2048|mimes:png,jpg,jpeg,pdf",
         ],[
-            'first_name.required' =>"Please enter first name !",
-            'last_name.required' =>"Please enter last name !",
             'email.required' =>"Please enter email !",
+            'email.email' =>"Please enter email example email@gmail.com !",
         ]
     
     );
 
         if(! $validator->fails()){
             $authors = new Author();
-            $authors->first_name = request()->get('first_name');
-            $authors->last_name = request()->get('last_name');
             $authors->email = request()->get('email');
-            $authors->password = request()->get('password');
-            $authors->mobile = request()->get('mobile');
-            $authors->address = request()->get('address');
-            $authors->date_of_birth = request()->get('date_of_birth');
-            $authors->gender = request()->get('gender');
-            $authors->status = request()->get('status');
-            // $authors->image = request()->get('image');
-            $authors->city_id = request()->get('city_id');
+            $authors->password = Hash::make($request->get('password'));
 
+            $isSaaved = $authors->save();
+            if ($isSaaved) {
+                $users = new User();
+                $image = $request->file('image');
+                $imageName = time() . 'image.' . $image->getClientOriginalExtension();
+                $image->move('storage/images/author', $imageName);
+                $users->image = $imageName;
 
-            $isSaved = $authors->save();
-            if ($isSaved) {
-            return response()->json(['icon' => 'success' , 'title' => "created is successfully"] , 200);
+                $users->first_name = request()->get('first_name');
+                $users->last_name = request()->get('last_name');
+                $users->mobile = request()->get('mobile');
+                $users->address = request()->get('address');
+                $users->date_of_birth = request()->get('date_of_birth');
+                $users->gender = request()->get('gender');
+                $users->status = request()->get('status');
+                $users->city_id = request()->get('city_id');
+                $users->actor()->associate($authors);
+            
+                $isSaaved = $users->save();
+                if ($isSaaved) {
 
+                return response()->json([
+                'icon' => 'success' ,
+                'title' => "created is successfully"
+                ] , 200);
+                }
+                else{
+                    return response()->json([
+                        'icon' => 'error' ,
+                        'title' => "created is Failed"
+                        ] , 400);
+                } 
             } 
         }
         else{
@@ -86,7 +98,7 @@ class AuthorController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**
@@ -97,7 +109,11 @@ class AuthorController extends Controller
      */
     public function edit($id)
     {
-        //
+        $authors = Author::findOrFail($id);
+        $cities = City::all();
+        return response()->view('cms.author.edit' , compact('cities' , 'authors'));
+
+        
     }
 
     /**
@@ -109,7 +125,60 @@ class AuthorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator($request->all(),[
+            'email'=> 'required|email',
+        ],[
+            'email.required' =>"Please enter email !",
+            'email.email' =>"Please enter email example email@gmail.com !",
+        ]
+    
+    );
+
+        if(! $validator->fails()){
+            $authors = Author::findOrFail($id);
+            $authors->email = request()->get('email');
+            $authors->password = Hash::make($request->get('password'));
+
+            $isUpdate = $authors->save();
+
+            if ($isUpdate) {
+                $users = $authors->user;
+                
+                $image = $request->file('image');
+                $imageName = time() . 'image.' . $image->getClientOriginalExtension();
+                $image->move('storage/images/author', $imageName);
+                $users->image = $imageName;
+
+                $users->first_name = request()->get('first_name');
+                $users->last_name = request()->get('last_name');
+                $users->mobile = request()->get('mobile');
+                $users->address = request()->get('address');
+                $users->date_of_birth = request()->get('date_of_birth');
+                $users->gender = request()->get('gender');
+                $users->status = request()->get('status');
+                $users->city_id = request()->get('city_id');
+                $users->actor()->associate($authors);
+            
+                $isUpdate = $users->save();
+                return ['redirect' =>route('authors.index')];
+                if ($isUpdate) {
+
+                return response()->json([
+                'icon' => 'success' ,
+                'title' => "created is successfully"
+                ] , 200);
+                }
+                else{
+                    return response()->json([
+                        'icon' => 'error' ,
+                        'title' => "created is Failed"
+                        ] , 400);
+                } 
+            } 
+        }
+        else{
+            return response()->json(['icon' => 'error' , 'title' =>$validator->getMessageBag()->first()] , 400);
+        }
     }
 
     /**
@@ -120,6 +189,15 @@ class AuthorController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $authors = Author::destroy($id);
     }
 }
+
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    

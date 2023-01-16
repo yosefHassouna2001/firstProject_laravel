@@ -1,9 +1,9 @@
 
 @extends('cms.parent')
 
-@section('title', 'Index Authors')
-@section('main-title', 'Index Authors')
-@section('sub-title', 'Index Authors')
+@section('title', 'Index Author')
+@section('main-title', 'Index Author')
+@section('sub-title', 'Index Author')
 
 @section('styles')
 
@@ -17,7 +17,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <a href="{{ route('authors.create') }}" type="submit" class="btn btn-info">Add New Authors</a>
+                        <a href="{{ route('authors.create') }}" type="submit" class="btn btn-info">Add New Author</a>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -25,12 +25,14 @@
                             <thead>
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Author First Name</th>
-                                <th>Author Last Name</th>
-                                <th>Author Email</th>
-                                <th>Author Mobile</th>
-                                <th>Author Gender</th>
-                                <th>Author Status</th>
+                                <th>Image</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th>Gender</th>
+                                <th>Status</th>
+                                <th>City Name</th>
 
                                 <th>Setting</th>
                             </tr>
@@ -39,19 +41,23 @@
                                 @foreach($authors as $author)
                                     <tr>
                                         <td>{{ $author->id }}</td>
-                                        <td>{{ $author->first_name }}</td>
-                                        <td>{{ $author->last_name }}</td>
-                                        <td>{{ $author->email}}</td>
-                                        <td>{{ $author->mobile }}</td>
-                                        <td>{{ $author->gender }}</td>
-                                        <td>{{ $author->status }}</td>
-
-                                        <td style="width: 200px">
-                                            <div class="btn group w-100">
-                                                <a href="{{ route('authors.edit' , $author->id) }}" type="button" class="btn btn-info">
+                                        <td>
+                                            <img class="img-circle img-bordered-sm" src="{{asset('storage/images/author/'.$author->user->image )?? "" }}" width="50" height="50" alt="User Image">
+                                        </td>
+                                        <td>{{ $author->user->first_name ?? "" }}</td>
+                                        <td>{{ $author->user->last_name ?? "" }}</td>
+                                        <td>{{ $author->email }}</td>
+                                        <td>{{ $author->user->mobile ?? "" }}</td>
+                                        <td>{{ $author->user->gender ?? "" }}</td>
+                                        <td>{{ $author->user->status ?? "" }}</td>
+                                        <td><span class="badge bg-info"> {{ $author->user->city->city_name ?? "" }}</span></td>
+                                        
+                                        <td >
+                                            <div class="btn group w-100 ">
+                                                <a href="{{ route('authors.edit' , $author->id) }}" type="button" class="btn btn-info mb-md-3   ">
                                                 <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a type="button" onclick="performDestroy({{ $author->id }} , this)" class="btn btn-danger">
+                                                <a type="button" onclick="performDestroy({{ $author->id }} , this)" class="btn btn-danger mb-md-3">
                                                 <i class="fas fa-trash-alt"></i>
                                                 </a>
                                             </div>
