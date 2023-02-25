@@ -18,7 +18,8 @@ class CreateCitiesTable extends Migration
             $table->string('city_name');
             $table->string('street');
             $table->foreignId('country_id');
-            $table->foreign('country_id')->on('counties')->references('id')->cascadeOnDelete();
+            $table->foreign('country_id')->on('counties')->references('id')->onDelete('cascade');
+            // $table->foreign('country_id')->on('counties')->references('id')->nullOnDelete();
 
             $table->timestamps();
         });

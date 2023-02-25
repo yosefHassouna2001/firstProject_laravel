@@ -144,7 +144,7 @@
         formData.append('gender' , document.getElementById('gender').value);
         formData.append('status' , document.getElementById('status').value);
         formData.append('city_id' , document.getElementById('city_id').value);
-        // formData.append('image' , document.getElementById('image').files);
+        formData.append('image' , document.getElementById('image').files[0] );
         store('/cms/admin/admins' , formData);
     }
 </script>

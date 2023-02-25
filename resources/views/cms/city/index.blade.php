@@ -17,7 +17,36 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <a href="{{ route('cities.create') }}" type="submit" class="btn btn-info">Add New City</a>
+                        <form action="" method="get" style="margin-bottom: 2%;">
+                            <div class="row">
+                              <div class="input-icon col-md-2">
+                                <input type="text" class="form-control" placeholder="Search By city name"
+                                name="city_name" @if(request()->city_name) value{{ request()->city_name }}
+                                  
+                                @endif/>
+                                <span>
+                                  <i class="flaticon2-search-1 text-muted"></i>
+                                </span>
+                              </div>
+                              <div class="input-icon col-md-2">
+                                <input type="text" class="form-control" placeholder="Search By street"
+                                name="street" @if(request()->street) value{{ request()->street }}
+                                  
+                                @endif/>
+                                <span>
+                                  <i class="flaticon2-search-1 text-muted"></i>
+                                </span>
+                              </div>
+                          
+            
+                              <div class=" col-md-4">
+                                <button class="btn btn-success btn-md" type="submit"> Filter</button>
+                                <a href="{{ route('cities.index') }}" class="btn btn-danger btn-md"> End Filter</a>
+                                <a href="{{ route('cities.create') }}"><button type="button" class="btn btn-primary btn-md"> Add new City </button> </a>
+                              
+                            </div>
+                          </form>
+            
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -37,7 +66,7 @@
                                         <td>{{ $city->id }}</td>
                                         <td>{{ $city->city_name }}</td>
                                         <td>{{ $city->street }}</td>
-                                        <td><span class="badge bg-info"> {{ $city->country->name }}</span></td>
+                                        <td><span class="badge bg-info"> {{ $city->country->name ?? "" }}</span></td>
                                         <td style="width: 200px">
                                             <div class="btn group w-100">
                                                 <a href="{{ route('cities.edit' , $city->id) }}" type="button" class="btn btn-info">

@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('mobile');
             $table->string('address');
             $table->string('image');
-            $table->string('date_of_birth');
+            $table->date('date_of_birth');
             $table->enum('status', ['active' , 'inactive']);
             $table->enum('gender', ['male' , 'female']);
 
@@ -28,7 +28,6 @@ class CreateUsersTable extends Migration
             $table->foreign('city_id')->on('cities')->references('id')->cascadeOnDelete();
             
             $table->morphs('actor');  //actor_type   actor_id
-            // $table->morphs('author');  //actor_type   actor_id
             $table->timestamps();
         });
     }

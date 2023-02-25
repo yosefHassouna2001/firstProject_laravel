@@ -1,0 +1,248 @@
+1- To Run Project Laravel => php artisan serve
+2- To Connect Database with Laravel
+    1- App Service Provider
+                             -> use Illuminate\Support\Facades\Schema;
+                             -> Schema::defaultStringLength(191);
+                             -> Paginator::useBootstrap();
+    2- In PhpMyAdmin =>
+                     -> Create New DataBase (name , الترميز)
+    3- .env ->
+             -> change port (3306 / 3308)
+             -> change name of database
+    4- php artisan migrate
+
+3- create new folder in public / views ( cms  -- name project)  / temp
+4- move all file and change .blade.php / {{ asset('folder/ .. ') }}
+5- follow Erd ( tabels ) => start to table no relation ( Foreign key )
+    -> create migration    =>  php artisan make:migration create_admins_table
+    -> php artisan migrate
+6- views ( index - edit - create - show ) / controler ( index - create - edit - store - show - update - destroy )
+    
+    **  view  **
+
+            -> create ( for - name - id - preformStore )
+                        -> data of anthor table 
+                            <select class="form-control select2" id="city_id" name="city_id" style="width: 100%;">
+                                @foreach($cities as $city)
+                                    <option value="{{ $city->id }}">{{ $city->city_name }}</option>
+                                @endforeach
+                            </select>
+                        -> to store button
+                            <button onclick="preformStore()" type="button" class="btn btn-primary">Store</button>
+                            <a href="{{ route('admins.index') }}" type="submit" class="btn btn-info">Go back</a>
+                        -> function store
+                            <script>
+                                function preformStore(){
+                                    let formData = new FormData();
+                                    formData.append('first_name' , document.getElementById('first_name').value);
+                                    formData.append('image' , document.getElementById('image').files[0]);
+                                    store('/cms/admin/admins' , formData);
+                                }
+                            </script>
+                    ------------------------------------
+            -> edit ( for - name - id - value - preformUpdate )
+                        -> value
+                            <input type="text" value="{{ $admins->user->first_name }}" class="form-control" id="first_name" name="first_name" placeholder="Enter Admin First Name">
+                        -> data of anthor table    
+                            <select class="form-control select2" id="city_id" name="city_id" style="width: 100%;">
+                                @foreach($cities as $city)
+                                    <option value="{{ $city->id }}"
+                                        @if($city->id == $admins->user->city_id)
+                                            selected
+                                        @endif>
+                                            {{ $city->city_name }}
+                                    </option> 
+                                @endforeach
+                            </select>
+                        -> update button
+                            <button onclick="preformUpdate({{ $admins->id }})" type="button" class="btn btn-primary">Update</button>
+                            <a href="{{ route('admins.index') }}" type="submit" class="btn btn-info">Go back</a>
+                        -> function update
+                            <script>
+                                function preformUpdate(id){
+                                    let formData = new FormData();
+                                    formData.append('first_name' , document.getElementById('first_name').value);
+                                    formData.append('image' , document.getElementById('image').files[0]);
+                                    storeRoute('/cms/admin/admins-update/'+ id , formData);
+                                }
+                            </script>
+                    ------------------------------------
+            -> index ( foreach - link edit - link delete - paginate - performDestroy )
+                        -> foreach
+                            @foreach($admins as $admin)
+                                <tr>
+                                    <td>{{ $admin->id }}</td>
+                                    <td>
+                                        <img class="img-circle img-bordered-sm" src="{{asset('storage/images/admin/'.$admin->user->image )?? "" }}" width="50" height="50" alt="User Image">
+                                    </td>
+                                    <td>{{ $admin->user->first_name ?? "" }}</td>
+                                    <td >
+                                        <div class="btn group w-100 ">
+                                            <a href="{{ route('admins.edit' , $admin->id) }}" type="button" class="btn btn-info mb-md-3   ">
+                                            <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a type="button" onclick="performDestroy({{ $admin->id }} , this)" class="btn btn-danger mb-md-3">
+                                            <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        -> paginate ( after table )
+                            {{ $admins->links() }}
+                        -> performDestroy
+                            <script>
+                                function performDestroy(id , referance){
+                                    confirmDestroy('/cms/admin/admins/' + id , referance)
+                                }
+                            </script>
+
+                    ------------------------------------
+            -> show ( for - name - id - value - same edit - desabled)
+
+
+                    ------------------------------------
+    **  controler  **
+
+            -> index    ( response view / Data of Model - عرض البيانات تحتاج الى استدعاء المودل )
+                    $admins = Admin::with('user')->orderBy('id' , 'desc')->paginate(10);
+                    return response()->view('cms.admin.index' , compact('admins'));
+                  
+                    ------------------------------------
+            -> create   ( response view / Variable in anthor Model - عرض واجهة الانشاء لا تحتاج الى استدعاء المودل )  
+                    $cities = City::all();      // عند استدعاء بيانات من مودل اخر
+                    return response()->view('cms.admin.create' , compact('cities'));
+                  
+                    ------------------------------------
+            -> store   ( validator / new Model / save / json - تخزين البيانات من المستخدم )  
+    
+                    $validator = Validator($request->all(),[
+                            'email'=> 'required|email',
+                        ],[
+                            'email.required' =>"Please enter email !",
+                            'email.email' =>"Please enter email example email@gmail.com !",
+                        ]
+                    );
+                        if(! $validator->fails()){
+                            $admins = new Admin();
+                            $admins->email = request()->get('email');
+                            $admins->password = Hash::make($request->get('password'));
+
+                            $isSaved = $admins->save();
+
+                            if ($isSaved) {
+                                $users = new User();
+                                $image = $request->file('image');
+                                $imageName = time() . 'image.' . $image->getClientOriginalExtension();
+                                $image->move('storage/images/admin', $imageName);
+                                $users->image = $imageName;
+
+                                $users->first_name = request()->get('first_name');
+                                $users->city_id = request()->get('city_id');
+                                $users->actor()->associate($admins);
+                            
+                                $isSaved = $users->save();
+                                
+                                if ($isSaved) {
+                                    return response()->json([
+                                        'icon' => 'success' ,
+                                        'title' => "created is successfully"
+                                        ] , 200);
+                                }
+                                else{
+                                    return response()->json([
+                                        'icon' => 'error' ,
+                                        'title' => "created is Failed"
+                                        ] , 400);
+                                } 
+                            } 
+                        }
+                        else{
+                            return response()->json(['icon' => 'error' , 'title' =>$validator->getMessageBag()->first()] , 400);
+                        }
+                    
+                    ------------------------------------
+            -> show   ( ) 
+
+                    ------------------------------------
+            -> edit   ( findOrFail / response view / Variable in anthor Model - عرض واجهة التعديل تحتاج الى استدعاء المودل  ) 
+                    $admins = Admin::findOrFail($id);
+                    $cities = City::all();
+                    return response()->view('cms.admin.edit' , compact('cities' , 'admins'));
+
+                    ------------------------------------
+            -> update   ( findOrFail - redirect - تعديل البيانات ) 
+                    
+                    $validator = Validator($request->all(),[
+                            'email'=> 'required|email',
+                        ],[
+                            'email.required' =>"Please enter email !",
+                            'email.email' =>"Please enter email example email@gmail.com !",
+                        ]
+                    );
+                        if(! $validator->fails()){
+                            $admins = Admin::findOrFail($id);
+                            $admins->email = request()->get('email');
+                            $admins->password = Hash::make($request->get('password'));
+
+                            $isUpdate = $admins->save();
+
+                            if ($isUpdate) {
+                                $users = new User();
+                                $image = $request->file('image');
+                                $imageName = time() . 'image.' . $image->getClientOriginalExtension();
+                                $image->move('storage/images/admin', $imageName);
+                                $users->image = $imageName;
+
+                                $users->first_name = request()->get('first_name');
+                                $users->city_id = request()->get('city_id');
+                                $users->actor()->associate($admins);
+                            
+                                $isUpdate = $users->save();
+                                return ['redirect' =>route('admins.index')];
+                                
+                                if ($isUpdate) {
+                                    return response()->json([
+                                        'icon' => 'success' ,
+                                        'title' => "Updateed is successfully"
+                                        ] , 200);
+                                }
+                                else{
+                                    return response()->json([
+                                        'icon' => 'error' ,
+                                        'title' => "created is Failed"
+                                        ] , 400);
+                                } 
+                            } 
+                        }
+                        else{
+                            return response()->json(['icon' => 'error' , 'title' =>$validator->getMessageBag()->first()] , 400);
+                        }
+
+                    ------------------------------------
+            -> destroy   ( ) 
+                    $admins = Admin::destroy($id);
+                    return response()->json([
+                                        'icon' => 'success' ,
+                                        'title' => "Deleted is successfully"
+                                        ] , 200);
+                    ------------------------------------
+
+
+                    ------------------------------------
+
+
+7- Route prefix ('cms/admin') =>
+        Route::prefix('cms/admin/')->group(function(){
+            Route::resource('admins', AdminController::class);
+            Route::post('admins-update/{id}', [AdminController::class , 'update'])->name('admins-update');
+        });
+
+
+
+
+
+
+
+
+

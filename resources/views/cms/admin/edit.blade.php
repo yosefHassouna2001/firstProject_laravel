@@ -58,7 +58,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="email">Admin Email</label>
-                                    <input type="email" value="{{ $admins->user->email }}"  class="form-control" id="email" name="email" placeholder="Enter Admin Email">
+                                    <input type="email" value="{{ $admins->email }}"  class="form-control" id="email" name="email" placeholder="Enter Admin Email">
                                 </div>
                             </div>
                             {{-- <div class="col-md-4">
@@ -149,7 +149,7 @@
         formData.append('gender' , document.getElementById('gender').value);
         formData.append('status' , document.getElementById('status').value);
         formData.append('city_id' , document.getElementById('city_id').value);
-        // formData.append('image' , document.getElementById('image').files);
+        formData.append('image' , document.getElementById('image').files[0]);
         storeRoute('/cms/admin/admins-update/'+ id , formData);
     }
 </script>

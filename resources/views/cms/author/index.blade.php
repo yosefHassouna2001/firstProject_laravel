@@ -33,6 +33,7 @@
                                 <th>Gender</th>
                                 <th>Status</th>
                                 <th>City Name</th>
+                                <th>Articles</th>
 
                                 <th>Setting</th>
                             </tr>
@@ -49,10 +50,22 @@
                                         <td>{{ $author->email }}</td>
                                         <td>{{ $author->user->mobile ?? "" }}</td>
                                         <td>{{ $author->user->gender ?? "" }}</td>
-                                        <td>{{ $author->user->status ?? "" }}</td>
+                                        <td>
+                                            @if ($author->user->status =="active") 
+                                                <span class="badge bg-success">{{ $author->user->status ?? "" }}</span>
+                                            @elseif ($author->user->status =="inactive")
+                                                <span class="badge bg-danger">{{ $author->user->status ?? "" }}</span>
+                                            
+                                            @endif
+                                        </td>
                                         <td><span class="badge bg-info"> {{ $author->user->city->city_name ?? "" }}</span></td>
                                         
-                                        <td >
+                                        <td><a href="{{route('indexArticle',['id'=>$author->id])}}"
+                                            class="btn btn-info">({{$author->articles_count}})
+                                            article/s</a> 
+                                        </td>
+                                        
+                                            <td >
                                             <div class="btn group w-100 ">
                                                 <a href="{{ route('authors.edit' , $author->id) }}" type="button" class="btn btn-info mb-md-3   ">
                                                 <i class="fas fa-edit"></i>

@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Author;
 use App\Models\City;
 use App\Models\User;
+use App\Models\Viewer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class AuthorController extends Controller
+class ViewerController extends Controller
 {
-
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        $authors = Author::with('user')->withCount('articles')->orderBy('id' , 'desc')->paginate(10);
-        return response()->view('cms.author.index' , compact('authors'));
+        $viewers = Viewer::with('user')->orderBy('id' , 'desc')->paginate(10);
+        return response()->view('cms.viewer.index' , compact('viewers'));
     }
 
     /**
@@ -25,7 +29,7 @@ class AuthorController extends Controller
     public function create()
     {
         $cities = City::all();
-        return response()->view('cms.author.create' , compact('cities'));
+        return response()->view('cms.viewer.create' , compact('cities'));
     }
 
     /**
@@ -39,6 +43,7 @@ class AuthorController extends Controller
         $validator = Validator($request->all(),[
             'email'=> 'required|email',
             'image'=>"required|image|max:2048|mimes:png,jpg,jpeg,pdf",
+
         ],[
             'email.required' =>"Please enter email !",
             'email.email' =>"Please enter email example email@gmail.com !",
@@ -47,19 +52,21 @@ class AuthorController extends Controller
     );
 
         if(! $validator->fails()){
-            $authors = new Author();
-            $authors->email = request()->get('email');
-            $authors->password = Hash::make($request->get('password'));
+            $viewers = new Viewer();
+            $viewers->email = request()->get('email');
+            $viewers->password = Hash::make($request->get('password'));
 
-            $isSaaved = $authors->save();
+            $isSaaved = $viewers->save();
             if ($isSaaved) {
                 $users = new User();
+
                 if($request->hasFile('image')){
                     $image = $request->file('image');
                     $imageName = time() . 'image.' . $image->getClientOriginalExtension();
-                    $image->move('storage/images/author', $imageName);
+                    $image->move('storage/images/viewer', $imageName);
                     $users->image = $imageName;
                 }
+
                 $users->first_name = request()->get('first_name');
                 $users->last_name = request()->get('last_name');
                 $users->mobile = request()->get('mobile');
@@ -68,7 +75,7 @@ class AuthorController extends Controller
                 $users->gender = request()->get('gender');
                 $users->status = request()->get('status');
                 $users->city_id = request()->get('city_id');
-                $users->actor()->associate($authors);
+                $users->actor()->associate($viewers);
             
                 $isSaaved = $users->save();
                 if ($isSaaved) {
@@ -110,9 +117,9 @@ class AuthorController extends Controller
      */
     public function edit($id)
     {
-        $authors = Author::findOrFail($id);
+        $viewers = Viewer::findOrFail($id);
         $cities = City::all();
-        return response()->view('cms.author.edit' , compact('cities' , 'authors'));
+        return response()->view('cms.viewer.edit' , compact('cities' , 'viewers'));
 
         
     }
@@ -128,28 +135,34 @@ class AuthorController extends Controller
     {
         $validator = Validator($request->all(),[
             'email'=> 'required|email',
+            'image' => 'image',
+            // $users->image = $imageName;
+
         ],[
             'email.required' =>"Please enter email !",
             'email.email' =>"Please enter email example email@gmail.com !",
+            'image.image' =>"Please enter image !",
         ]
     
     );
 
         if(! $validator->fails()){
-            $authors = Author::findOrFail($id);
-            $authors->email = request()->get('email');
-            $authors->password = Hash::make($request->get('password'));
+            $viewers = Viewer::findOrFail($id);
+            $viewers->email = request()->get('email');
+            // $viewers->password = Hash::make($request->get('password'));
 
-            $isUpdate = $authors->save();
+            $isUpdate = $viewers->save();
 
             if ($isUpdate) {
-                $users = $authors->user;
+                $users = $viewers->user;
+
                 if($request->hasFile('image')){
                     $image = $request->file('image');
                     $imageName = time() . 'image.' . $image->getClientOriginalExtension();
-                    $image->move('storage/images/author', $imageName);
+                    $image->move('storage/images/viewer', $imageName);
                     $users->image = $imageName;
                 }
+                
                 $users->first_name = request()->get('first_name');
                 $users->last_name = request()->get('last_name');
                 $users->mobile = request()->get('mobile');
@@ -158,10 +171,10 @@ class AuthorController extends Controller
                 $users->gender = request()->get('gender');
                 $users->status = request()->get('status');
                 $users->city_id = request()->get('city_id');
-                $users->actor()->associate($authors);
+                $users->actor()->associate($viewers);
             
                 $isUpdate = $users->save();
-                return ['redirect' =>route('authors.index')];
+                return ['redirect' =>route('viewers.index')];
                 if ($isUpdate) {
 
                 return response()->json([
@@ -190,17 +203,8 @@ class AuthorController extends Controller
      */
     public function destroy($id)
     {
-        $authors = Author::destroy($id);
+        $viewers = Viewer::destroy($id);
         return response()->json(['icon' => 'success' , 'title' => "Deleted is successfully"] , 200);
 
     }
 }
-
-
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    

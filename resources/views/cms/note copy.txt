@@ -1,0 +1,159 @@
+==> TO create new project with laravel :-                                   ||       ** Introduction in laravel
+    --> open PowerShell in www folder .                                     ||       ** Laravel Route
+    --> composer create-project laravel/laravel projectName                 ||       ** Connect Database & Migration 
+                                                                            ||       ** Foreign Key in migration
+         { laravel }  ==>> mvc  { model  - view  - controller }             ||       ** Single page blade
+                                                                            ||       ** Multy page
+          v <<  view  >>  <--  user                                         ||       ** route in blade & route name $route parameter
+    post    get     put     delete                                          ||       ** Model 
+            <<  controller  >>                                              ||       ** Controller Resorce
+    create  read    update  delete                                          ||       ** db builder
+            <<  model  >>                                                   ||       ** Eloquents
+    insert  select  update  delete                                          ||       ** SoftDelete
+________________________________________                                    ||       ** Seeder and Factory 
+                                                                            ||       ** Control Board (لوحة التحكم )
+ ==>> First step                                                            ||       ** index + create + edit + delete blade
+                                                                            ||       ** crud js ( store - edit - update )
+1- To Run Project Laravel => php artisan serve                              ||       ** morph relation and create admin
+2- To Connect Database with Laravel                                         ||       ** git hub
+    1- App Service Provider                                                 ||       ** filter
+                             -> use Illuminate\Support\Facades\Schema;      ||       ** Authontication
+                             -> Schema::defaultStringLength(191);           ||       ** Roles and Permission
+    2- In PhpMyAdmin =>                                                     ||       ** WebSite control
+                     -> Create New DataBase ( name , الترميز)              ||       ** Policy
+    3- .env ->                                                              ||       ** mutator function
+             -> change port (3306 / 3308)                                   ||       ** الاحصائيات
+             -> change name of database                                     ||       ** Api
+    4- php artisan migrate
+
+________________________________________
+
+3- To Create New Table in Laravel (Migration)
+    1- php artisan make:migration create_admins_table
+
+        $table->string('name');
+        $table->string('email')->unique();
+        $table->integer('age')->nullable();
+        $table->float('avg');
+        $table->enum('gender' , ['male' , 'female']);
+        $table->date('d_o_b');
+        $table->timestamps();
+    
+    2- foreign key in migration
+
+        ( categories )   1 _____ M   ( sub-categories )
+
+        {sub-categories}  <= داخل جدول المالانهاية نضيف التالي 
+
+        $table->foreignId('category_id');
+        $table->foreign('category_id')->on('categories')->references('id')->cascadeOnDelete();
+        $table->foreign('country_id')->on('counties')->references('id')->nullOnDelete();
+
+
+
+4- To Alter Table with laravel
+    1- php artisan make:migration add_coulmnName_to_tableName_table
+       
+        $table->string('fullname')->after('name');
+        $table->dropcolumn('name');
+        $table->renamecolumn('email' , 'newemail');  
+        $table->string('price' , '50')->nullable()->change();
+
+           <=  يجب تنزيل هذه المكتبة 
+        composer require doctrine/dbal
+
+________________________________________
+
+5- To Migrate Table :
+    -> php artisan migrate
+    -> php artisan migrate:rollback --step=1
+    -> php artisan migrate:reset ( excute to down function => Rollback)
+    -> php artisan migrate:refresh ( excute to down function then excute to up function)
+    -> php artisan migrate:fresh ( drop all table then excute to up function)
+    -> php artisan migrate:status
+
+6- Route   web.php
+    
+    Route::get('nameRoute', function () {
+        return view("nameView");
+    });
+
+    Route::view('single' , 'front.index');
+
+________________________________________
+
+7- Single page blade :-
+
+    ->create new folder onsite resources/views/newFolder      { او باسم المشروع front}
+    ->create new folder onsite public/newFolder
+    ->add all files HTML onsite { resources/views/newFolder } with change .html  to  .blade.php
+    ->add all files (CSS , JS , ..) onsite { public/newFolder } 
+    ->create Route ( مع مراعاه عدم تسمية الراوت نفس اسم المجلد )
+    ->change on links files (css , js) onsite file .blade.php
+        link  ==>  {{ asset('newfolder/...link...') }}
+
+________________________________________
+
+8- multy page blade :-
+
+    ->create new folder onsite resources/views/newFolder      { او باسم المشروع front}
+    ->create new folder onsite public/newFolder
+    ->add all files HTML onsite { resources/views/newFolder } with change .html  to  .blade.php
+    ->add all files (CSS , JS , ..) onsite { public/newFolder } 
+    ->create new page ( parent.blade.php )
+        ->opject static ex: (nav header , footer)
+        ->{{ asset('newfolder/...link...') }}
+        ->all change ==>  yield('namePlase')
+            ex: -> yield('styles')
+    ->create new page ( temp.blade.php )
+        ->add ( extend , sections )
+            @extends('multy.parent')
+            @section('title' , 'home')
+            @section('styles')
+            @endsection
+    ->  اضافةالتالي parent  داخل باقي الملفات ما عدا ملف  
+        ->delete opject static
+        ->copyed temp file and add content page
+    ->create Route for every page
+        Route::view('multy/home' , 'multy.index')->name('news.index');
+________________________________________
+
+9- model
+    ->php artisan make:model Admin      // SubCategory  (كلمتين)
+
+
+10- Type of controller resources
+    -> Empty Controller
+    -> Resource Controller
+
+    => Function of controller Resource
+        1- index (get)
+        2- create (get)
+        3- store (post)
+        4- show (get)
+        5- edit (get)
+        6- update (put)
+        7- destroy (delete)
+
+11- controller
+    -> php artisan make:controller CategoryController 
+    -> php artisan make:controller CategoryController -r
+________________________________________________________________________________
+
+** To Deal With DataBase in Laravel
+    -> SQl natave
+    -> DB Builder
+    -> Eloquent
+
+________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+

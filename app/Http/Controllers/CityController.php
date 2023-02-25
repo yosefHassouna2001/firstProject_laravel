@@ -13,11 +13,24 @@ class CityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $cities = City::with('country')->orderBy('id' , 'desc')->paginate(10);
-        return response()->view('cms.city.index' , compact('cities'));
-       
+    public function index(Request $request)
+ {
+    
+    $cities= City::with('country')->orderBy('id' , 'desc');
+
+    if ($request->get('city_name')) {
+        $cities = City::where('city_name', 'like', '%' . $request->city_name . '%');
+    }
+    if ($request->get('street')) {
+        $cities = City::where('street', 'like', '%' . $request->street . '%');
+    }
+   
+
+    $cities = $cities->paginate(10);
+
+
+    return response()->view('cms.city.index' , compact('cities'));
+
     }
 
     /**

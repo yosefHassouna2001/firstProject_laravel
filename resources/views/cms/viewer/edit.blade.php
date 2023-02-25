@@ -1,9 +1,9 @@
 
 @extends('cms.parent')
 
-@section('title', 'Edit Author')
-@section('main-title', 'Edit Author')
-@section('sub-title', 'Edit Author')
+@section('title', 'Edit Viewer')
+@section('main-title', 'Edit Viewer')
+@section('sub-title', 'Edit Viewer')
 
 @section('styles')
 
@@ -19,7 +19,7 @@
                 <!-- general form elements -->
                 <div class="card card-primary">
                     <div class="card-header">
-                    <h3 class="card-title">Edit Author</h3>
+                    <h3 class="card-title">Edit viewer</h3>
                     </div>
                     <!-- /.card-header -->
                     <!-- form start -->
@@ -32,7 +32,7 @@
                                     <select class="form-control select2" id="city_id" name="city_id" style="width: 100%;">
                                         @foreach($cities as $city)
                                             <option value="{{ $city->id }}"
-                                                @if($city->id == $authors->user->city_id)
+                                                @if($city->id == $viewers->user->city_id)
                                                 selected
                                                 @endif>
                                                 {{ $city->city_name }}
@@ -43,48 +43,48 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="first_name">Author First Name</label>
-                                    <input type="text" value="{{ $authors->user->first_name }}" class="form-control" id="first_name" name="first_name" placeholder="Enter Author First Name">
+                                    <label for="first_name">viewer First Name</label>
+                                    <input type="text" value="{{ $viewers->user->first_name }}" class="form-control" id="first_name" name="first_name" placeholder="Enter viewer First Name">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="last_name">Author Last Name</label>
-                                    <input type="text" value="{{ $authors->user->last_name }}"  class="form-control" id="last_name" name ="last_name" placeholder="Enter Author Last Name">
+                                    <label for="last_name">viewer Last Name</label>
+                                    <input type="text" value="{{ $viewers->user->last_name }}"  class="form-control" id="last_name" name ="last_name" placeholder="Enter viewer Last Name">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="email">Author Email</label>
-                                    <input type="email" value="{{ $authors->user->email }}"  class="form-control" id="email" name="email" placeholder="Enter Author Email">
+                                    <label for="email">viewer Email</label>
+                                    <input type="email" value="{{ $viewers->email }}"  class="form-control" id="email" name="email" placeholder="Enter viewer Email">
                                 </div>
                             </div>
                             {{-- <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="password">Password</label>
-                                    <input type="password" class="form-control" id="password" name ="password" placeholder="Enter Author Password">
+                                    <input type="password" class="form-control" id="password" name ="password" placeholder="Enter viewer Password">
                                 </div>
                             </div> --}}
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="mobile">Mobile</label>
-                                    <input type="text" value="{{ $authors->user->mobile }}"  class="form-control" id="mobile" name ="mobile" placeholder="Enter Author Mobile">
+                                    <input type="text" value="{{ $viewers->user->mobile }}"  class="form-control" id="mobile" name ="mobile" placeholder="Enter viewer Mobile">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="address">Author Address</label>
-                                    <input type="text" value="{{ $authors->user->address }}"  class="form-control" id="address" name="address" placeholder="Enter Author Address">
+                                    <label for="address">viewer Address</label>
+                                    <input type="text" value="{{ $viewers->user->address }}"  class="form-control" id="address" name="address" placeholder="Enter viewer Address">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="date_of_birth">Date Of Birth</label>
-                                    <input type="date" value="{{ $authors->user->date_of_birth }}"  class="form-control" id="date_of_birth" name ="date_of_birth" placeholder="Enter Author date_of_birth">
+                                    <input type="date" value="{{ $viewers->user->date_of_birth }}"  class="form-control" id="date_of_birth" name ="date_of_birth" placeholder="Enter viewer date_of_birth">
                                 </div>
                             </div>
                         </div>
@@ -94,7 +94,7 @@
                                 <label for="gender">Gender</label>
                                 <select name="gender" class="form-control" id="gender" 
                                 aria-label=".form-select-sm example">
-                                    <option selected >{{ $authors->user->gender }}</option>
+                                    <option selected >{{ $viewers->user->gender }}</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                 </select>
@@ -103,7 +103,7 @@
                                 <label for="status">Status</label>
                                 <select name="status" class="form-control" id="status"
                                 aria-label=".form-select-sm example">
-                                <option selected >{{ $authors->user->status }}</option>
+                                <option selected >{{ $viewers->user->status }}</option>
                                 <option value="active">active</option>
                                     <option value="inactive">inactive</option>
                                 </select>
@@ -114,7 +114,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="image">Choose Image</label>
-                                    <input type="file" class="form-control" id="image" name="image" placeholder="Enter Author Image">
+                                    <input type="file" class="form-control" id="image" name="image" placeholder="Enter viewer Image">
                                 </div>
                             </div>
                         </div>
@@ -122,8 +122,8 @@
                     <!-- /.card-body -->
 
                     <div class="card-footer">
-                        <button onclick="preformUpdate({{ $authors->id }})" type="button" class="btn btn-primary">Update</button>
-                        <a href="{{ route('authors.index') }}" type="submit" class="btn btn-info">Go back</a>
+                        <button onclick="preformUpdate({{ $viewers->id }})" type="button" class="btn btn-primary">Update</button>
+                        <a href="{{ route('viewers.index') }}" type="submit" class="btn btn-info">Go back</a>
                     </div>
                     </form>
                 </div>
@@ -150,7 +150,7 @@
         formData.append('status' , document.getElementById('status').value);
         formData.append('city_id' , document.getElementById('city_id').value);
         formData.append('image' , document.getElementById('image').files[0]);
-        storeRoute('/cms/admin/authors-update/'+ id , formData);
+        storeRoute('/cms/viewer/viewers-update/'+ id , formData);
     }
 </script>
 
